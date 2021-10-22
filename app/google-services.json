@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "970905020881",
+    "project_id": "fotogeopointer",
+    "storage_bucket": "fotogeopointer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970905020881:android:0a0eb0cdf84e32206558f0",
+        "android_client_info": {
+          "package_name": "com.glindor.fotogeopointer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "970905020881-rffrlbiqefnmp4aglrlr816qripmll8b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.glindor.fotogeopointer",
+            "certificate_hash": "b7e3956e9cab11663f1226187d7dc67b12e2dce7"
+          }
+        },
+        {
+          "client_id": "970905020881-17lm4ddshihssk88vh3uj1er7k55esuh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCt_DMd-Nd687WZgh-Br3cFBEBgfyjr1PE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "970905020881-17lm4ddshihssk88vh3uj1er7k55esuh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
