@@ -1,5 +1,6 @@
 package com.glindor.fotogeopointer.ui.listpoints
 
 import com.glindor.fotogeopointer.data.entity.Point
+import com.glindor.fotogeopointer.ui.base.BaseViewState
 
-data class ListViewSate(val points:List<Point>?)
+class ListViewSate(value: List<Point>? = null) : BaseViewState<List<Point>?>(value)

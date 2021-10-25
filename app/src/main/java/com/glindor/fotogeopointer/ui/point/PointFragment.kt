@@ -1,8 +1,6 @@
 package com.glindor.fotogeopointer.ui.point
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -14,7 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.glindor.fotogeopointer.R
 import com.glindor.fotogeopointer.data.entity.Point
-import com.glindor.fotogeopointer.ui.listpoints.ListViewModel
+import com.glindor.fotogeopointer.ui.IOnBackPressed
+import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.utils.Logger
 import kotlinx.android.synthetic.main.fragment_second.*
 import java.util.*
@@ -22,10 +21,12 @@ import java.util.*
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class PointFragment : Fragment()  {
+class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
 
-    private lateinit var pointViewModel: PointViewModel
-    private var point:Point? = null
+    override val viewModel: PointViewModel by lazy {
+        ViewModelProvider(this).get(PointViewModel::class.java)
+    }
+    private var workPoint:Point? = null
 
     companion object{
         private val REQUEST_POINT = PointFragment::class.java.name + "REQUEST_POINT"
@@ -36,7 +37,7 @@ class PointFragment : Fragment()  {
             point?.let {
                 view.parentFragmentManager.setFragmentResult(
                     REQUEST_POINT,
-                    bundleOf(BUNDLE_POINT to it)
+                    bundleOf(BUNDLE_POINT to it.id)
                 )
             }
             view.findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
@@ -52,46 +53,30 @@ class PointFragment : Fragment()  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initUserView()
-        initViewModel()
         parentFragmentManager.setFragmentResultListener(REQUEST_POINT,this) {
                 _, bundle ->
-            Logger.d("a2")
-            val result = bundle.getParcelable<Point>(BUNDLE_POINT)
+            val result = bundle.getString(BUNDLE_POINT)
             result?.let {
-                point = it
-                Logger.d("a3")
-                initPointView(point)
+                viewModel.loadPoint(it)
+                initPointView(workPoint)
             }
-
         }
-
+        initUserView(view)
+        initViewModel()
+    }
+    private fun initUserView(view: View) {
         view.findViewById<Button>(R.id.btn_getGeo).setOnClickListener {
-            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
+//            findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }
-
-
     }
 
-    private fun initViewModel() {
-        pointViewModel =
-            ViewModelProvider(this).get(PointViewModel::class.java)
-    }
-
-    private val pointTextListener = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        override fun afterTextChanged(s: Editable?)  = savePoint()
-    }
-
-    private fun initUserView() {
-        point_name.addTextChangedListener(pointTextListener)
-        point_disc.addTextChangedListener(pointTextListener)
-        point_lati.addTextChangedListener(pointTextListener)
-        point_longi.addTextChangedListener(pointTextListener)
+    override fun renderData(newData: Point?) {
+        workPoint = newData
+        initPointView(newData)
     }
 
     private fun initPointView(inPoint: Point? = null) {
+        Logger.d("initPointView $inPoint")
         inPoint?.let {
             point_name.setText(it.name)
             point_disc.setText(it.disc)
@@ -105,8 +90,9 @@ class PointFragment : Fragment()  {
         }
     }
 
-    fun savePoint() {
-        point = point?.copy(
+    private fun savePoint() {
+        Logger.d("savePoint1 $workPoint")
+        workPoint = workPoint?.copy(
             name = point_name.text.toString(),
             disc = point_disc.text.toString(),
             lati = point_lati.text.toString().toFloat(),
@@ -118,12 +104,10 @@ class PointFragment : Fragment()  {
             point_lati.text.toString().toFloat(),
             point_longi.text.toString().toFloat()
         )
+        Logger.d("savePoint2 $workPoint")
 
-        point?.let {
-            pointViewModel.savePoint(it)
-        }
+        viewModel.savePoint(workPoint!!)
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         android.R.id.home -> {
@@ -132,12 +116,10 @@ class PointFragment : Fragment()  {
         }
         else -> super.onOptionsItemSelected(item)
     }
-/*
+
     override fun onBackPressed(): Boolean {
         Logger.d("fragment onBackPressed")
         savePoint()
-        return  true
+        return true
     }
-
- */
 }

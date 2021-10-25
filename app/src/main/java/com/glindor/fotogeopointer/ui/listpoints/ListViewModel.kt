@@ -1,19 +1,19 @@
 package com.glindor.fotogeopointer.ui.listpoints
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.glindor.fotogeopointer.data.PointsRepository
+import com.glindor.fotogeopointer.data.DataRepository
+import com.glindor.fotogeopointer.data.provider.TestProvider
+import com.glindor.fotogeopointer.data.entity.Point
+import com.glindor.fotogeopointer.ui.base.BaseViewModel
 
-class ListViewModel : ViewModel() {
+class ListViewModel : BaseViewModel<List<Point>?, ListViewSate>() {
 
-    private var viewStateLiveDate: MutableLiveData<ListViewSate> = MutableLiveData()
+    private var repositoryLiveDate= DataRepository.getPoints()
     init {
-        PointsRepository.getPoints().observeForever {
-            viewStateLiveDate.value = viewStateLiveDate.value?.copy(points = it) ?: ListViewSate(it)
-        }
+        repositoryLiveDate.observeForever(observer)
     }
 
-    //    val viewState: LiveData<DashboardViewSate> = viewStateLiveDate
-    fun getViewSate():  LiveData<ListViewSate> = viewStateLiveDate
+    override fun onCleared() {
+        this.repositoryLiveDate.removeObserver(observer)
+        super.onCleared()
+    }
 }

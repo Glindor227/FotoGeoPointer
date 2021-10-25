@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
 import com.glindor.fotogeopointer.R
+import com.glindor.fotogeopointer.ui.IOnBackPressed
 import com.glindor.fotogeopointer.utils.Logger
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        Logger.d("activity onBackPressed")
+        val visibleFragment =  supportFragmentManager.fragments.find { it is NavHostFragment}
+            ?.childFragmentManager?.fragments?.find { it.isVisible  }
+        (visibleFragment as? IOnBackPressed)?.onBackPressed()
         if (supportFragmentManager.backStackEntryCount == 0) {
             super.onBackPressed()
         } else {

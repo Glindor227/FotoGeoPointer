@@ -8,18 +8,21 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.glindor.fotogeopointer.R
+import com.glindor.fotogeopointer.data.entity.Point
 import com.glindor.fotogeopointer.ui.PointRVAdapter
+import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.ui.point.PointFragment
 import com.glindor.fotogeopointer.utils.Logger
-import kotlinx.android.synthetic.main.fragment_first.*
 import kotlinx.android.synthetic.main.fragment_first.view.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class ListFragment : Fragment() {
+class ListFragment : BaseFragment<List<Point>?, ListViewSate>() {
 
-    private lateinit var listViewModel: ListViewModel
+    override val viewModel: ListViewModel by lazy {
+        ViewModelProvider(this).get(ListViewModel::class.java)
+    }
     private lateinit var adapter: PointRVAdapter
 
     override fun onCreateView(
@@ -49,16 +52,9 @@ class ListFragment : Fragment() {
 
     }
 
-    private fun initViewModel(){
-        listViewModel =
-            ViewModelProvider(this).get(ListViewModel::class.java)
-
-        listViewModel.getViewSate().observe(viewLifecycleOwner, {
-            it?.let {
-                it.points?.let { newList ->
-                    adapter.points = newList }
-            }
-        })
-
+    override fun renderData(newData: List<Point>?) {
+        newData?.let {
+            adapter.points = it
+        }
     }
 }
