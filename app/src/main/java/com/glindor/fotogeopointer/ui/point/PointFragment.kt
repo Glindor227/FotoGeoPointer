@@ -15,6 +15,7 @@ import com.glindor.fotogeopointer.data.entity.Point
 import com.glindor.fotogeopointer.ui.IOnBackPressed
 import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.utils.Logger
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_second.*
 import java.util.*
 
@@ -48,7 +49,9 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_second, container, false)
+        initViewModel()
+        root = inflater.inflate(R.layout.fragment_second, container, false)
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
             }
         }
         initUserView(view)
-        initViewModel()
+
     }
     private fun initUserView(view: View) {
         view.findViewById<Button>(R.id.btn_getGeo).setOnClickListener {
@@ -76,7 +79,7 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
     }
 
     private fun initPointView(inPoint: Point? = null) {
-        Logger.d("initPointView $inPoint")
+        Logger.d(this,"initPointView $inPoint")
         inPoint?.let {
             point_name.setText(it.name)
             point_disc.setText(it.disc)
@@ -91,7 +94,7 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
     }
 
     private fun savePoint() {
-        Logger.d("savePoint1 $workPoint")
+        Logger.d(this,"savePoint1 $workPoint")
         workPoint = workPoint?.copy(
             name = point_name.text.toString(),
             disc = point_disc.text.toString(),
@@ -104,22 +107,24 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
             point_lati.text.toString().toFloat(),
             point_longi.text.toString().toFloat()
         )
-        Logger.d("savePoint2 $workPoint")
+        Logger.d(this,"savePoint2 $workPoint")
 
         viewModel.savePoint(workPoint!!)
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         android.R.id.home -> {
-            Logger.d("onOptionsItemSelected android.R.id.home")
+            Logger.d(this,"onOptionsItemSelected android.R.id.home")
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
     override fun onBackPressed(): Boolean {
-        Logger.d("fragment onBackPressed")
+        Logger.d(this,"fragment onBackPressed")
         savePoint()
         return true
     }
+
+
 }

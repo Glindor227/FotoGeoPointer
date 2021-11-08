@@ -3,11 +3,14 @@ package com.glindor.fotogeopointer.data.provider
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.glindor.fotogeopointer.data.entity.Point
+import com.glindor.fotogeopointer.data.entity.User
+import com.glindor.fotogeopointer.data.model.DataResult
 import com.glindor.fotogeopointer.utils.Logger
+import java.lang.Exception
 
 class TestProvider: IDataProvider {
-    private var points = MutableLiveData<MutableList<Point>?>()
-    private var point = MutableLiveData<Point?>()
+    private var points: MutableList<Point>? = null
+    private var point: Point? = null
 
     private var tempPoints: MutableList<Point>? = mutableListOf(
         Point("0", "имя1", "описание1", 1.0f, 1.0f),
@@ -33,24 +36,43 @@ class TestProvider: IDataProvider {
     )
 
     init {
-        points.value = tempPoints
-
+        points = tempPoints
     }
 
-    override fun addPoint(point: Point) {
-        points.value?.find { it == point }?.let {
-            Logger.d("заменяем $point")
-            points.value = points.value.replace(newValue = point) { it == point }?.toMutableList()
+    override fun addPoint(point: Point): LiveData<DataResult> {
+        points?.find { it == point }?.let {
+            Logger.d(this,"заменяем $point")
+            points = points.replace(newValue = point) { it == point }?.toMutableList()
         } ?: let {
-            Logger.d("добавляем $point")
-            points.value?.add(point)
+            Logger.d(this,"добавляем $point")
+            points?.add(point)
         }
+        return MutableLiveData()
     }
 
-    override fun getPoints(): LiveData<MutableList<Point>?> = points
-    override fun getPoint(id: String): LiveData<Point?> {
-        point.value = points.value?.find { it.id == id }
-        return point
+    override fun getCurrentUser(): LiveData<DataResult> {
+        return MutableLiveData()
+    }
+
+    override fun getPoints(): LiveData<DataResult> {
+        val rez = MutableLiveData<DataResult>()
+        points?.let {
+            rez.value = DataResult.Success(points)
+        } ?: let {
+            rez.value = DataResult.Error(Exception("Нет списка"))
+        }
+        return rez
+    }
+
+    override fun getPoint(id: String): LiveData<DataResult> {
+        val rez = MutableLiveData<DataResult>()
+        point = points?.find { it.id == id }
+        point?.let {
+            rez.value = DataResult.Success(point)
+        } ?: let {
+            rez.value = DataResult.Error(Exception("Нет элемента"))
+        }
+        return rez
     }
 
     private fun <E> MutableList<E>?.replace(newValue: E, function: (E) -> Boolean): List<E>? {
@@ -58,4 +80,6 @@ class TestProvider: IDataProvider {
             if (function(it)) newValue else it
         }
     }
+
+
 }

@@ -1,10 +1,12 @@
 package com.glindor.fotogeopointer.ui.listpoints
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.glindor.fotogeopointer.R
@@ -13,6 +15,7 @@ import com.glindor.fotogeopointer.ui.PointRVAdapter
 import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.ui.point.PointFragment
 import com.glindor.fotogeopointer.utils.Logger
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_first.view.*
 
 /**
@@ -24,13 +27,12 @@ class ListFragment : BaseFragment<List<Point>?, ListViewSate>() {
         ViewModelProvider(this).get(ListViewModel::class.java)
     }
     private lateinit var adapter: PointRVAdapter
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val root =  inflater.inflate(R.layout.fragment_first, container, false)
+        root =  inflater.inflate(R.layout.fragment_first, container, false)
         initViewModel()
         initUserView(root)
         return  root
@@ -43,13 +45,9 @@ class ListFragment : BaseFragment<List<Point>?, ListViewSate>() {
             PointFragment.start(this,it)
         })
         fragment.rv_points.adapter = adapter
-        Logger.d("1")
         fragment.fab.setOnClickListener {
-            Logger.d("2")
             PointFragment.start(this)
         }
-        Logger.d("3")
-
     }
 
     override fun renderData(newData: List<Point>?) {
