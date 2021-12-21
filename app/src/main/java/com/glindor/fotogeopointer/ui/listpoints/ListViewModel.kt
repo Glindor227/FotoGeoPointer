@@ -6,9 +6,9 @@ import com.glindor.fotogeopointer.data.entity.Point
 import com.glindor.fotogeopointer.data.model.DataResult
 import com.glindor.fotogeopointer.ui.base.BaseViewModel
 
-class ListViewModel : BaseViewModel<List<Point>?, ListViewSate>() {
+class ListViewModel(private val dataRepository: DataRepository) : BaseViewModel<List<Point>?, ListViewSate>() {
 
-    private var repositoryLiveDate : LiveData<DataResult> = DataRepository.getPoints()
+    private var repositoryLiveDate : LiveData<DataResult> = dataRepository.getPoints()
 
     init {
         repositoryLiveDate.observeForever(observer)

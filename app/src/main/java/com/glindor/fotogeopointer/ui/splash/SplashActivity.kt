@@ -3,15 +3,15 @@ package com.glindor.fotogeopointer.ui.splash
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.glindor.fotogeopointer.R
 import com.glindor.fotogeopointer.data.error.NotAuthentication
 import com.glindor.fotogeopointer.ui.mainactivity.MainActivity
 import com.glindor.fotogeopointer.utils.Logger
+import org.koin.android.viewmodel.ext.android.viewModel
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts
 
 
 class SplashActivity : AppCompatActivity() {
@@ -21,9 +21,7 @@ class SplashActivity : AppCompatActivity() {
                     context.startActivity(this)
                 }
     }
-    private val viewModel: SplashViewModel by lazy {
-        ViewModelProvider(this).get(SplashViewModel::class.java)
-    }
+    private val viewModel: SplashViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //        setContentView(R.layout.activity_splash) //TODO прыгает экран в какойто момент
@@ -39,8 +37,8 @@ class SplashActivity : AppCompatActivity() {
     private fun initViewModel() {
         viewModel.getViewState().observe(this, {splashViewState ->
             splashViewState.error?.let { error ->
-                error.takeIf {it is NotAuthentication }.run {
-                    Logger.d(this,"${this?.javaClass?.name}: Not user")
+                error.takeIf {it is NotAuthentication }.let {
+                    Logger.d(it,"${it?.javaClass?.name}: Not user")
                     StartAuthentication()
                 }
             }

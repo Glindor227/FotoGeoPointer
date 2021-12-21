@@ -10,14 +10,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FireStoreDataBaseProvider : IDataProvider {
+class FireBaseProvider(private val storage: FirebaseFirestore, private val auth: FirebaseAuth) : IDataProvider {
 
-    companion object{
+    companion object {
         const val POINT_COLLECTION_NAME = "points"
         const val USER_COLLECTION_NAME = "users"
     }
-    private val storage by lazy { FirebaseFirestore.getInstance() }
-    private val currentUser get() = FirebaseAuth.getInstance().currentUser
+    private val currentUser get() = auth.currentUser
 
     private val pointsCollection: CollectionReference
     get() = currentUser?.let {
@@ -27,15 +26,16 @@ class FireStoreDataBaseProvider : IDataProvider {
             .collection(POINT_COLLECTION_NAME)
     }?: throw NotAuthentication()
 
-
     override fun getCurrentUser() =  MutableLiveData<DataResult>().apply {
         try {
-            currentUser?.let{Logger.d(null,"FireStoreDataBaseProvider: currentUser есть")}
-                    ?: run { Logger.d(null,"FireStoreDataBaseProvider: currentUser нет") }
-            value = currentUser?.let { fbUser ->
-                Logger.d(null,"FireStoreDataBaseProvider: getCurrentUser fbUser = ${fbUser.email}")
-                DataResult.Success(User(fbUser.displayName ?: "", fbUser.email ?: ""))
-            } ?: throw NotAuthentication()
+            value = currentUser?.run {
+                Logger.d(null,"FireStoreDataBaseProvider: getCurrentUser fbUser = $email")
+                DataResult.Success(User(displayName ?: "", email ?: ""))
+            } ?: let {
+                Logger.d(null,"FireStoreDataBaseProvider: currentUser нет")
+                throw NotAuthentication()
+            }
+
         } catch (e: Throwable) {
             Logger.d(null,"FireStoreDataBaseProvider:getCurrentUser Exception $e")
             value = DataResult.Error(e)

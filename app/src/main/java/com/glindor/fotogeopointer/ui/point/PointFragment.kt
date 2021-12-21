@@ -8,26 +8,25 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.glindor.fotogeopointer.R
 import com.glindor.fotogeopointer.data.entity.Point
+import com.glindor.fotogeopointer.databinding.FragmentSecondBinding
 import com.glindor.fotogeopointer.ui.IOnBackPressed
 import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.utils.Logger
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_second.*
 import java.util.*
-
+import org.koin.android.viewmodel.ext.android.viewModel
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
 class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
 
-    override val viewModel: PointViewModel by lazy {
-        ViewModelProvider(this).get(PointViewModel::class.java)
-    }
+    override val viewModel: PointViewModel by viewModel()
     private var workPoint:Point? = null
+    private var _binding: FragmentSecondBinding? = null
+    private val binding get() = _binding!!
 
     companion object{
         private val REQUEST_POINT = PointFragment::class.java.name + "REQUEST_POINT"
@@ -50,7 +49,9 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
         savedInstanceState: Bundle?
     ): View? {
         initViewModel()
-        root = inflater.inflate(R.layout.fragment_second, container, false)
+        //root = inflater.inflate(R.layout.fragment_second, container, false)
+        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+        root = binding.root
         return root
     }
 
@@ -80,33 +81,37 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
 
     private fun initPointView(inPoint: Point? = null) {
         Logger.d(this,"initPointView $inPoint")
-        inPoint?.let {
-            point_name.setText(it.name)
-            point_disc.setText(it.disc)
-            point_lati.text = it.lati.toString()
-            point_longi.text = it.longi.toString()
-        } ?: let {
-            point_name.setText(R.string.point_name)
-            point_disc.setText(R.string.point_disc)
-            point_lati.setText(R.string.lati_null)
-            point_longi.setText(R.string.longi_null)
+        with(binding) {
+            inPoint?.let {
+                pointName.setText(it.name)
+                pointDisc.setText(it.disc)
+                pointLati.text = it.lati.toString()
+                pointLongi.text = it.longi.toString()
+            } ?: let {
+                pointName.setText(R.string.point_name)
+                pointDisc.setText(R.string.point_disc)
+                pointLati.setText(R.string.lati_null)
+                pointLongi.setText(R.string.longi_null)
+            }
         }
     }
 
     private fun savePoint() {
         Logger.d(this,"savePoint1 $workPoint")
-        workPoint = workPoint?.copy(
-            name = point_name.text.toString(),
-            disc = point_disc.text.toString(),
-            lati = point_lati.text.toString().toFloat(),
-            longi = point_longi.text.toString().toFloat()
-        ) ?: Point(
-            UUID.randomUUID().toString(),
-            point_name.text.toString(),
-            point_disc.text.toString(),
-            point_lati.text.toString().toFloat(),
-            point_longi.text.toString().toFloat()
-        )
+        with(binding) {
+            workPoint = workPoint?.copy(
+                name = pointName.text.toString(),
+                disc = pointDisc.text.toString(),
+                lati = pointLati.text.toString().toFloat(),
+                longi = pointLongi.text.toString().toFloat()
+            ) ?: Point(
+                UUID.randomUUID().toString(),
+                pointName.text.toString(),
+                pointDisc.text.toString(),
+                pointLati.text.toString().toFloat(),
+                pointLongi.text.toString().toFloat()
+            )
+        }
         Logger.d(this,"savePoint2 $workPoint")
 
         viewModel.savePoint(workPoint!!)
@@ -126,5 +131,9 @@ class PointFragment : BaseFragment<Point?, PointViewState>(), IOnBackPressed {
         return true
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

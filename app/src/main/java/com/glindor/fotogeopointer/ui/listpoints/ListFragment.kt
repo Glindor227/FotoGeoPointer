@@ -1,51 +1,48 @@
 package com.glindor.fotogeopointer.ui.listpoints
 
-import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.glindor.fotogeopointer.R
 import com.glindor.fotogeopointer.data.entity.Point
+import com.glindor.fotogeopointer.databinding.FragmentFirstBinding
 import com.glindor.fotogeopointer.ui.PointRVAdapter
 import com.glindor.fotogeopointer.ui.base.BaseFragment
 import com.glindor.fotogeopointer.ui.point.PointFragment
-import com.glindor.fotogeopointer.utils.Logger
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_first.view.*
+import org.koin.android.viewmodel.ext.android.viewModel
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class ListFragment : BaseFragment<List<Point>?, ListViewSate>() {
 
-    override val viewModel: ListViewModel by lazy {
-        ViewModelProvider(this).get(ListViewModel::class.java)
-    }
+    override val viewModel: ListViewModel by viewModel()
     private lateinit var adapter: PointRVAdapter
+    private var _binding: FragmentFirstBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        root =  inflater.inflate(R.layout.fragment_first, container, false)
+        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        root = binding.root
         initViewModel()
-        initUserView(root)
-        return  root
+        initUserView()
+        return root
     }
 
-    private fun initUserView(fragment: View){
-        val recyclerViewManager = GridLayoutManager(requireContext(),2)
-        fragment.rv_points.layoutManager = recyclerViewManager
+    private fun initUserView() {
+        val recyclerViewManager = GridLayoutManager(requireContext(), 2)
+        binding.rvPoints.layoutManager = recyclerViewManager
         adapter = PointRVAdapter(onClickListener = {
-            PointFragment.start(this,it)
+            PointFragment.start(this, it)
         })
-        fragment.rv_points.adapter = adapter
-        fragment.fab.setOnClickListener {
+        binding.rvPoints.adapter = adapter
+        binding.fab.setOnClickListener {
             PointFragment.start(this)
         }
     }
@@ -55,4 +52,9 @@ class ListFragment : BaseFragment<List<Point>?, ListViewSate>() {
             adapter.points = it
         }
     }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

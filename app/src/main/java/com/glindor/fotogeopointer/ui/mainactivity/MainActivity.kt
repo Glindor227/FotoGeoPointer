@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import com.firebase.ui.auth.AuthUI
@@ -13,6 +12,7 @@ import com.glindor.fotogeopointer.R
 import com.glindor.fotogeopointer.ui.IOnBackPressed
 import com.glindor.fotogeopointer.ui.splash.SplashActivity
 import com.glindor.fotogeopointer.utils.Logger
+import org.jetbrains.anko.alert
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,19 +53,28 @@ class MainActivity : AppCompatActivity() {
         }
         R.id.action_settings -> true
         R.id.action_logout -> {
-            showLogoutDialog(this)
+            showLogoutDialog()
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
 
-    private fun showLogoutDialog(mainActivity: MainActivity) {
-        AlertDialog.Builder(mainActivity)
-                .setTitle(getString(R.string.logout_dialog_title))
-                .setMessage(getString(R.string.logout_dialog_message))
-                .setPositiveButton(getString(R.string.logout_dialog_button_positive)) { _, _ -> logOut() }
-                .setNegativeButton(getString(R.string.logout_dialog_button_negative)) { dialog, _ -> dialog.cancel()}
-                .show()
+    private fun showLogoutDialog() {
+        alert{
+            titleResource = R.string.logout_dialog_title
+            messageResource = R.string.logout_dialog_message
+            positiveButton(R.string.logout_dialog_button_positive) { logOut() }
+            negativeButton(R.string.logout_dialog_button_negative) { dialog ->  dialog.cancel()}
+        }.show()
+
+/*
+       AlertDialog.Builder(mainActivity)
+            .setTitle(getString(R.string.logout_dialog_title))
+            .setMessage(getString(R.string.logout_dialog_message))
+            .setPositiveButton(getString(R.string.logout_dialog_button_positive)) { _, _ -> logOut() }
+            .setNegativeButton(getString(R.string.logout_dialog_button_negative)) { dialog, _ -> dialog.cancel()}
+            .show()
+*/
     }
 
     private fun logOut() {

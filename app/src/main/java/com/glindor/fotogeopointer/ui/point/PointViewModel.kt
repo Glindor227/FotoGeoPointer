@@ -8,23 +8,23 @@ import com.glindor.fotogeopointer.ui.base.BaseViewModel
 import com.glindor.fotogeopointer.utils.Logger
 
 
-class PointViewModel: BaseViewModel<Point?, PointViewState>() {
+class PointViewModel(private val dataRepository: DataRepository): BaseViewModel<Point?, PointViewState>() {
     private var repositoryLiveDate :LiveData<DataResult>? = null
     private var storagePoint: Point? = null
     fun savePoint(point: Point) {
         storagePoint = point
         Logger.d(this,"Записываем $point")
         storagePoint?.let {
-            DataRepository.addPoint(it) // по идее тут надо ловить LiveDate с ошибкой
+            dataRepository.addPoint(it) // по идее тут надо ловить LiveDate с ошибкой
         }
     }
     fun loadPoint(id: String) {
         repositoryLiveDate?.removeObserver(observer)
-        repositoryLiveDate = DataRepository.getPoint(id)
+        repositoryLiveDate = dataRepository.getPoint(id)
         repositoryLiveDate?.observeForever(observer)
     }
     override fun onCleared() {
-        storagePoint?.let { DataRepository.addPoint(it) }
+        storagePoint?.let { dataRepository.addPoint(it) }
         repositoryLiveDate?.removeObserver(observer)
         super.onCleared()
     }

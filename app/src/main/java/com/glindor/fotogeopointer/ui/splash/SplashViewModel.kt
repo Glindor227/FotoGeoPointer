@@ -10,11 +10,11 @@ import com.glindor.fotogeopointer.ui.base.BaseViewModel
 import com.glindor.fotogeopointer.ui.base.BaseViewState
 import com.glindor.fotogeopointer.utils.Logger
 
-class SplashViewModel:BaseViewModel<User?,SplashViewState>() {
+class SplashViewModel(private val dataRepository: DataRepository):BaseViewModel<User?,SplashViewState>() {
     private var repositoryLiveDate : LiveData<DataResult>? = null
     fun initUser() {
         repositoryLiveDate?.removeObserver(observer)
-        repositoryLiveDate = DataRepository.getCurrentUser()
+        repositoryLiveDate = dataRepository.getCurrentUser()
         repositoryLiveDate?.observeForever(observer)
     }
 
