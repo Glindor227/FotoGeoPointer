@@ -1,10 +1,10 @@
 package com.glindor.fotogeopointer.data.entity
 
-data class Point( val id:String = "",
-                  val name:String = "",
-                  val disc:String = "",
-                  val lati:Float = 0.0f,
-                  val longi:Float = 0.0f) {
+data class Point(var id:String = "",
+                 val name:String = "",
+                 val disc:String = "",
+                 val lati:Float = 0.0f,
+                 val longi:Float = 0.0f) {
 
     override fun equals(other: Any?): Boolean = when{
         (other === this) -> true

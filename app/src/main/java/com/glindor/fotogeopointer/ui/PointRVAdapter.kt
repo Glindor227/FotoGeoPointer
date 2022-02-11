@@ -18,6 +18,7 @@ class PointRVAdapter(val onClickListener: ((Point) -> Unit)? = null ):RecyclerVi
         ItemPointBinding.inflate(LayoutInflater.from(parent.context),parent,false)
     )
 
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(points[position])
 
     override fun getItemCount() = points.size

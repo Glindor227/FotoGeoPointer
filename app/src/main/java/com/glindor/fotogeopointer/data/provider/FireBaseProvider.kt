@@ -27,8 +27,8 @@ class FireBaseProvider(private val storage: FirebaseFirestore, private val auth:
     }?: throw NotAuthentication()
 
     override fun getCurrentUser() =  MutableLiveData<DataResult>().apply {
-        try {
-            value = currentUser?.run {
+        value = try {
+            currentUser?.run {
                 Logger.d(null,"FireStoreDataBaseProvider: getCurrentUser fbUser = $email")
                 DataResult.Success(User(displayName ?: "", email ?: ""))
             } ?: let {
@@ -38,7 +38,7 @@ class FireBaseProvider(private val storage: FirebaseFirestore, private val auth:
 
         } catch (e: Throwable) {
             Logger.d(null,"FireStoreDataBaseProvider:getCurrentUser Exception $e")
-            value = DataResult.Error(e)
+            DataResult.Error(e)
         }
     }
 
@@ -85,8 +85,18 @@ class FireBaseProvider(private val storage: FirebaseFirestore, private val auth:
         } catch (e: Throwable) {
             value = DataResult.Error(e)
         }
-
     }
 
+    override fun deletePoint(id: String) = MutableLiveData<DataResult>().apply{
+        try {
+            pointsCollection.document(id).delete().addOnSuccessListener {
+                value = DataResult.Success(null)
+            }.addOnFailureListener {
+                throw it
+            }
+        } catch (e: Throwable) {
+            value = DataResult.Error(e)
+        }
+    }
 
 }

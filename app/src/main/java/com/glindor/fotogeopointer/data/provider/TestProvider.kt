@@ -50,6 +50,10 @@ class TestProvider: IDataProvider {
         return MutableLiveData()
     }
 
+    override fun deletePoint(id: String): LiveData<DataResult> {
+        TODO("Not yet implemented")
+    }
+
     override fun getCurrentUser(): LiveData<DataResult> {
         return MutableLiveData()
     }

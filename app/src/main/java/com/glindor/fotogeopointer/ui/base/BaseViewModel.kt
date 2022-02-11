@@ -7,21 +7,24 @@ import androidx.lifecycle.ViewModel
 import com.glindor.fotogeopointer.data.model.DataResult
 import com.glindor.fotogeopointer.utils.Logger
 
-open class BaseViewModel<T, S : BaseViewState<T>> : ViewModel() {
+open class BaseViewModel<T, S > : ViewModel() {
 
     open var viewStateLiveDate = MutableLiveData<S>()
     open fun getViewState(): LiveData<S>  {
         return viewStateLiveDate
     }
+
+    // подписчик на данные из репозитория.
     open val observer =  Observer<DataResult>{ result ->
-            when (result) {
+        Logger.d(this,"Инициируем BaseViewModel observer $result")
+        viewStateLiveDate.value = when (result) {
                 is DataResult.Success<*> -> {
-                    Logger.d(this,"пришли данные "+ result.data.toString())
-                    viewStateLiveDate.value = BaseViewState(value = result.data as T,error = null) as S
+                    Logger.d(this, "viewStateLiveDate.value было = ${viewStateLiveDate.value}")
+                    BaseViewState(value = result.data as T, error = null) as S
                 }
                 is DataResult.Error -> {
                     Logger.d(this,"пришла ошибка " + result.error.toString())
-                    viewStateLiveDate.value = BaseViewState(value = null, error = result.error) as S
+                    BaseViewState(value = null, error = result.error) as S
                 }
             }
     }

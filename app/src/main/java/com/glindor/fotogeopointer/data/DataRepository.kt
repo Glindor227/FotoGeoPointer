@@ -10,5 +10,6 @@ class DataRepository(private val currentRepository: IDataProvider) {
     fun addPoint(point: Point) = currentRepository.addPoint(point)
     fun getPoints() : LiveData<DataResult> = currentRepository.getPoints()
     fun getPoint(id:String) : LiveData<DataResult> = currentRepository.getPoint(id)
+    fun deletePoint(id:String) : LiveData<DataResult> = currentRepository.deletePoint(id)
     fun getCurrentUser() = currentRepository.getCurrentUser()
 }

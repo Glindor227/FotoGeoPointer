@@ -8,8 +8,6 @@
     <string name="next">Next</string>
     <string name="previous">Set GeoPoint</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="point_name">Имя точки</string>
     <string name="point_disc">Описание точки</string>
     <string name="longi_null">0.0</string>
@@ -19,4 +17,8 @@
     <string name="logout_dialog_message">Вы хотите сменить пользователя</string>
     <string name="logout_dialog_button_positive">Да</string>
     <string name="logout_dialog_button_negative">Нет</string>
+    <string name="delete_menu">Удалить</string>
+    <string name="title_point_new">Новая точка</string>
+    <string name="title_point">Точка: </string>
+    <string name="list_title">Список точек</string>
 </resources>
